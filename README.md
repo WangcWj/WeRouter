@@ -1,7 +1,8 @@
 # WeRouter
 参考ARouter实现原理,一款功能更单纯的路由框架.   
 
-[![Download](https://jitpack.io/v/WangcWj/WeRouter.svg) ](https://jitpack.io/#WangcWj/WeRouter)
+[![Download](https://jitpack.io/v/WangcWj/WeRouter.svg) ](https://codeload.github.com/WangcWj/WeRouter/zip/master)
+
 
 #### 使用:    
 再项目根目录build.gradle下面引入该仓库:   
