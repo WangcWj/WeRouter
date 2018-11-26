@@ -9,15 +9,21 @@
 
 ```
 allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
 	}
+}
 ```   
 之后再使用的地方添加下面的依赖:   
 ```
 dependencies {
-	        implementation 'com.github.WangcWj:WeRouter:Tag'
-	}
+	implementation 'com.github.WangcWj:WeRouter:?'
+}
+```
+
+初始化:
+```
+
+
 ```
