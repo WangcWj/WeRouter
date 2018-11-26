@@ -1,0 +1,1 @@
+include ':app', ':werouter-annotation', ':werouter-compiler', ':werouter-api'

@@ -1,0 +1,12 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(":werouter-annotation")
+    implementation 'com.google.auto.service:auto-service:1.0-rc4'
+    implementation 'com.squareup:javapoet:1.11.1'
+    compile 'org.apache.commons:commons-lang3:3.4'
+}
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
