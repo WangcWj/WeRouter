@@ -1,4 +1,4 @@
-package cn.router.api.interfaces;
+package cn.router.api.method;
 
 import java.util.Map;
 
@@ -11,7 +11,7 @@ import cn.router.werouter.annotation.bean.RouterBean;
  * @date 2018/11/21
  */
 
-public interface WeRouterGroup {
+public interface WeRouterPath {
 
     /**
      * 添加单个路由路径到集合中

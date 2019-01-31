@@ -1,0 +1,25 @@
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    //这里面你想用什么就去引入什么
+    compile 'com.android.tools.build:gradle:3.0.0'
+}
+
+repositories {
+    jcenter()
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: uri('../werouter_plugin/src/main/repertory'))
+        pom.groupId = 'cn.werouter'
+        pom.artifactId = 'plugin'
+        pom.version = "1.0.0"
+    }
+}
+
+

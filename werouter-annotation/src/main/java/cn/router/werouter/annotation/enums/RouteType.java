@@ -13,7 +13,8 @@ public enum RouteType {
      */
     ACTIVITY(0, "android.app.Activity"),
     SERVICE(1, "android.app.Service"),
-    FRAGMENT(-1, "android.app.Fragment"),
+    FRAGMENT(2, "android.app.Fragment"),
+    PROVIDE(3, "cn.router.api.method.WeRouterProvider"),
     UNKNOWN(-2, "Unknown route type");
 
     int id;

@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * Created to :Mark the class as output class.
  *
  * @author WANG
- * @date 2018/11/2
+ * @since  2018/11/2
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.CLASS)

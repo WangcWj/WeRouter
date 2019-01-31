@@ -1,24 +1,18 @@
 package cn.router.api.router;
 
-import android.content.Context;
-import android.content.Intent;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
-import java.util.Set;
+import android.util.Log;
 
 import cn.router.api.base.DataStorage;
 import cn.router.api.exception.HandlerException;
 import cn.router.api.exception.InitException;
-import cn.router.api.interfaces.WeRouterGroup;
-import cn.router.api.interfaces.WeRouterRoot;
+import cn.router.api.method.WeRouterPath;
+import cn.router.api.method.WeRouterProvider;
 import cn.router.api.utils.ClassUtils;
 import cn.router.werouter.annotation.bean.RouterBean;
 import cn.router.werouter.annotation.enums.RouteType;
 
 /**
- * Created to :
+ * Created to : 先这样吧  未完成 先去搞组件化  搞完再用它
  *
  * @author WANG
  * @date 2018/11/23
@@ -26,8 +20,18 @@ import cn.router.werouter.annotation.enums.RouteType;
 
 public class LoadingCenter {
 
-    private static String mRootClassPath = "cn.router.process.Router$Root$root";
     private static String mTag = "WeRouter :";
+
+    /**
+     * 通过插件开始初始化工作
+     */
+    public static void init() {
+        //like this...
+        // initByPlugin("cn.router.process.Router$Provider$root$app");
+        // initByPlugin("cn.router.process.Router$Root$root$app");
+        // initByPlugin("cn.router.process.Router$Provider$root$ceshimodule");
+        // initByPlugin("cn.router.process.Router$Root$root$ceshimodule");
+    }
 
     /**
      * <p>
@@ -35,43 +39,54 @@ public class LoadingCenter {
      * ARouter里面采用的是加载dex文件的方式去加载类.
      * </p>
      */
-    public static void init() {
+    public static void initByPlugin(String className) {
         try {
-            //这里面还差个 缓存的问题
-            Object instance = ClassUtils.findInstanceByClassPath(mRootClassPath);
-            if (instance instanceof WeRouterRoot) {
-                WeRouterRoot weRouterRoot = (WeRouterRoot) instance;
-                weRouterRoot.init(DataStorage.mRoots);
+            Object instance = ClassUtils.findInstanceByClassPath(className);
+            if (instance instanceof WeRouterPath) {
+                WeRouterPath weRouterRoot = (WeRouterPath) instance;
+                weRouterRoot.init(DataStorage.mGroups);
+                Log.e("WANG", "LoadingCenter.initByPlugin.className" + className);
+            } else if (instance instanceof WeRouterProvider) {
+                WeRouterProvider provider = (WeRouterProvider) instance;
+
             }
         } catch (Exception e) {
-            throw new InitException("Router : LoadingCenter.init方法在加载指定类的时候出现的问题 :  " + e.getMessage());
+            throw new InitException(mTag + ": 插件初始化时出现了问题 :LoadingCenter.init()" + e.getMessage());
         }
-
     }
+
 
     public static void completion(Transform transform) {
         //加载要使用到的分组的数据
         RouterBean routerBean = DataStorage.mGroups.get(transform.getPath());
         if (null == routerBean) {
-            Class<? extends WeRouterGroup> aClass = DataStorage.mRoots.get(transform.getGroup());
-            if (null == aClass) {
-                throw new HandlerException(mTag + "There is no route match the path [" + transform.getPath() + "], in group [" + transform.getGroup() + "]");
-            } else {
-                try {
-                    Constructor<?> constructor = ClassUtils.findConstructorByClass(aClass);
-                    WeRouterGroup instance = (WeRouterGroup) constructor.newInstance();
-                    instance.init(DataStorage.mGroups);
-                    DataStorage.mRoots.remove(transform.getGroup());
-                } catch (Exception e) {
-                    throw new HandlerException(mTag + "找不到该分组的数据. " + e.getMessage());
-                }
-                //reload
-                completion(transform);
-            }
+            throw new HandlerException(mTag + "路径("+transform.getPath()+")丢失了~~~~~ ");
         } else {
             transform.setRouterBean(routerBean);
-        }
+            if (transform.getRouteType() == RouteType.PROVIDE) {
+                try {
+                    Class<?> target = transform.getTarget();
+                    Object instance = target.getConstructor().newInstance();
+                    if (instance instanceof WeRouterProvider) {
+                        transform.setRouterProvider((WeRouterProvider) instance);
+                    }
+                } catch (Exception e) {
 
+                }
+            }
+        }
+    }
+
+    public static Transform buildProvider(String className) {
+        /*RouterBean routerBean = DataStorage.mProviders.get(className);
+        if (null != routerBean) {
+            Transform transform = new Transform(routerBean.getPath(), routerBean.getGroup());
+            transform.setRouterBean(routerBean);
+            return transform;
+        } else {
+            return null;
+        }*/
+        return null;
     }
 
 

@@ -2,14 +2,13 @@ package cn.router.wang.main;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import cn.router.api.router.WeRouter;
 import cn.router.werouter.annotation.Router;
 
 
-@Router(path = "/Activity/MainActivity")
+@Router(path = "native://MainActivity")
 public class MainActivity extends AppCompatActivity implements MduleMethod{
 
     @Override
@@ -21,13 +20,10 @@ public class MainActivity extends AppCompatActivity implements MduleMethod{
             @Override
             public void onClick(View v) {
                 WeRouter.getInstance()
-                        .build("/text/SecondActivity")
+                        .build("native://SecondActivity")
                         .withString("w","chao")
                         .navigation(MainActivity.this);
-               // Object navigation = WeRouter.getInstance().build("/fragment/BlankFragment").navigation();
-               // Log.e("WANG","MainActivity.onClick."+navigation );
             }
         });
-
     }
 }

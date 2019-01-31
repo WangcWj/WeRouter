@@ -6,7 +6,7 @@ import android.util.Log;
 
 import cn.router.werouter.annotation.Router;
 
-@Router(path = "/text/SecondActivity")
+@Router(path = "native://SecondActivity")
 public class SecondActivity extends AppCompatActivity {
 
     @Override

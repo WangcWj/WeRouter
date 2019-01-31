@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * Created to :Mark a page can be route by cn.router.
  *
  * @author WANG
- * @date 2018/11/2
+ * @since  2018/11/2
  */
 
 @Retention(RetentionPolicy.CLASS)

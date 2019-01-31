@@ -4,9 +4,11 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/WeRouter.iml" filepath="$PROJECT_DIR$/WeRouter.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ceshimodule/ceshimodule.iml" filepath="$PROJECT_DIR$/ceshimodule/ceshimodule.iml" />
       <module fileurl="file://$PROJECT_DIR$/werouter-annotation/werouter-annotation.iml" filepath="$PROJECT_DIR$/werouter-annotation/werouter-annotation.iml" />
       <module fileurl="file://$PROJECT_DIR$/werouter-api/werouter-api.iml" filepath="$PROJECT_DIR$/werouter-api/werouter-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/werouter-compiler/werouter-compiler.iml" filepath="$PROJECT_DIR$/werouter-compiler/werouter-compiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/werouter_plugin/werouter_plugin.iml" filepath="$PROJECT_DIR$/werouter_plugin/werouter_plugin.iml" />
     </modules>
   </component>
 </project>

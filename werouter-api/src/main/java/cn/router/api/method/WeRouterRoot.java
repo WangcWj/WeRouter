@@ -1,4 +1,4 @@
-package cn.router.api.interfaces;
+package cn.router.api.method;
 
 import java.util.Map;
 
@@ -13,7 +13,6 @@ public interface WeRouterRoot {
 
     /**
      * 添加单个分组到集合中
-     * @param routers
      */
-    void init(Map<String, Class<? extends WeRouterGroup>> routers);
+    Map<String,Class<? extends WeRouterPath>> init();
 }

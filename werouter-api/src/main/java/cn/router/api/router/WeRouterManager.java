@@ -10,9 +10,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
+
+import java.lang.reflect.Constructor;
 
 import cn.router.api.exception.HandlerException;
 import cn.router.api.exception.InitException;
+import cn.router.api.provider.PathReplaceProvider;
 import cn.router.werouter.annotation.enums.RouteType;
 
 /**
@@ -28,6 +32,9 @@ public class WeRouterManager {
     private static Context mContext;
     private static Handler mHandle;
     private String mTag = "WeRouter :";
+    private final String NATIVE = "native://";
+    private final String URL = "http://";
+    private final String URLS = "https://";
 
 
     public static boolean init(Application application) {
@@ -56,22 +63,62 @@ public class WeRouterManager {
 
 
     public Transform build(String path) {
-        String group;
+        PathReplaceProvider replaceProvider = navigation(PathReplaceProvider.class);
+        if (null != replaceProvider) {
+            path = replaceProvider.format(path);
+        }
         if (TextUtils.isEmpty(path)) {
             throw new HandlerException(mTag + "请检查跳转路径是否正确!");
-        } else {
-            group = handleGroup(path);
         }
-        return Transform.build(path, group);
+        path = handlePath(path);
+        return Transform.build(path);
     }
 
 
-    public Object navigation(Context context, final Transform transform , final int requestCode) {
+    /**
+     *  ARouter的设计:
+     *               首先 ARouter分了一个 provider功能出来, 也就是如果一个类实现了IProvider接口这边就能完成一些重要的服务功能.
+     *               ARouter提供的有 PathReplaceService :可以处理跳转的path.   SerializationService:用来序列化对象.   DegradeService : 当跳转不成功的时候能有感知.
+     *               ClassLoaderService 等等.这些都是IProvider接口的子类,使用就是实现这些接口,用@Router注释.这样再ARouter的工作中就会根据场景去获取我们实现的服务类.
+     *
+     *               ARouter管理Provider也是采用了两种方式:
+     *               第一:  采用分组管理 , ARouter$$Root$$app 里面管理所有的分组.ARouter$$Group$$xxxx 里面关系该分组的所有成员.
+     *                     这种方式是可以用指定的path去获取该provider的实例.跟IRouteGroup实现跳转的原理一样的.
+     *
+     *               第二: 直接用Class对象去获取Provider的实例.这个就需要ARouter$$Providers$$app类,该类存储了以实现了IProvider接口的实现类的CLass对象为key存储,
+     *               这样就可以使用Class对象去查找我们需要的Provider对象了.
+     *
+     *               设计的目的并不单单的是给用户特定的几个实现类,而是把更多的自定义权限给了用户.ARouter要求的那几个实现类是对跳转过程中起到一定作用的.
+     *
+     * @param service
+     * @param <T>
+     * @return
+     */
+    public <T> T navigation(Class<? extends T> service) {
         try {
-            //首次使用到某个分组的时候再去初始化某个分组的信息
+            Transform transform = LoadingCenter.buildProvider(service.getName());
+            if (null == transform) {
+                transform = LoadingCenter.buildProvider(service.getSimpleName());
+            }
+
+            if (transform == null) {
+                return null;
+            }
+
+            Constructor<?> constructor = transform.getTarget().getConstructor();
+            Object instance = constructor.newInstance();
+            return (T) instance;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
+    public Object navigation(Context context, final Transform transform, final int requestCode) {
+        try {
             LoadingCenter.completion(transform);
         } catch (Exception e) {
-
+           throw new RuntimeException("分组数据异常!");
         }
         final Context currentContext = null == context ? mContext : context;
 
@@ -86,17 +133,17 @@ public class WeRouterManager {
                 }
 
                 Bundle data = transform.getData();
-                if(null != data){
+                if (null != data) {
                     intent.putExtras(data);
                 }
 
                 if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-                    startActivity(currentContext,intent,requestCode,transform);
+                    startActivity(currentContext, intent, requestCode, transform);
                 } else {
                     mHandle.post(new Runnable() {
                         @Override
                         public void run() {
-                            startActivity(currentContext,intent,requestCode,transform);
+                            startActivity(currentContext, intent, requestCode, transform);
                         }
                     });
                 }
@@ -104,6 +151,7 @@ public class WeRouterManager {
                 break;
             case SERVICE:
                 break;
+            case PROVIDE:
             case FRAGMENT:
                 Class fragmentMeta = transform.getTarget();
                 try {
@@ -114,7 +162,7 @@ public class WeRouterManager {
 
                     } else if (instance instanceof android.support.v4.app.Fragment) {
                         //参数
-                       ((android.support.v4.app.Fragment) instance).setArguments(transform.getData());
+                        ((android.support.v4.app.Fragment) instance).setArguments(transform.getData());
                     }
                     return instance;
                 } catch (Exception ex) {
@@ -126,11 +174,11 @@ public class WeRouterManager {
 
     }
 
-    private void startActivity(Context currentContext, Intent intent, int requestCode,Transform transform) {
+    private void startActivity(Context currentContext, Intent intent, int requestCode, Transform transform) {
         // Need start for result
         if (requestCode >= 0 && currentContext instanceof Activity) {
             Activity activity = (Activity) currentContext;
-            activity.startActivityForResult(intent,requestCode);
+            activity.startActivityForResult(intent, requestCode);
 
         } else {
             currentContext.startActivity(intent);
@@ -138,6 +186,22 @@ public class WeRouterManager {
 
     }
 
+    /**
+     * 从 Path中获取Group  把直接设置Group的功能去掉
+     *
+     * @return
+     */
+    private String handlePath(String path) {
+        if (TextUtils.isEmpty(path) ) {
+            throw new HandlerException(mTag + "the path must be not null !");
+        }
+        String lowerCasePath = path.toLowerCase();
+        if(lowerCasePath.startsWith(NATIVE) || lowerCasePath.startsWith(URL) || lowerCasePath.startsWith(URLS)){
+            return path;
+        }else {
+            throw new HandlerException(mTag + "the path must be start with :  ( native:// or https:// or http://) !");
+        }
+    }
 
     /**
      * 从 Path中获取Group  把直接设置Group的功能去掉

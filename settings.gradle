@@ -1,1 +1,1 @@
-include ':app', ':werouter-annotation', ':werouter-compiler', ':werouter-api'
+include ':app', ':werouter-annotation', ':werouter-compiler', ':werouter-api', ':ceshimodule', ':werouter_plugin'

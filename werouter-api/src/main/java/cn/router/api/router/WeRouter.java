@@ -23,10 +23,14 @@ public class WeRouter {
     private volatile static boolean hasInit = false;
     private static Context context;
 
+    /**
+     * ARouter设计必须每个依赖的module都要设置那个moduleName ,
+     * 我猜是为了区别每个module里面生成类的类名称.
+     * @param application
+     */
     public synchronized static void init(Application application) {
         context = application.getApplicationContext();
         hasInit = WeRouterManager.init(application);
-
     }
 
     private WeRouter() {
@@ -58,11 +62,6 @@ public class WeRouter {
 
     public Transform build(String path){
        return WeRouterManager.getInstance().build(path);
-    }
-
-
-    public void navigation(String path) {
-
     }
 
 }

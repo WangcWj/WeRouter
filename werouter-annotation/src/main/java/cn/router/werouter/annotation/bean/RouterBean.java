@@ -9,7 +9,7 @@ import cn.router.werouter.annotation.enums.RouteType;
  * Created to :
  *
  * @author WANG
- * @date 2018/11/5
+ * @since  2018/11/5
  */
 
 public class RouterBean {
@@ -27,7 +27,6 @@ public class RouterBean {
      */
     private String path;
 
-    private String group;
     /**
      * 跳转目标的包名
      */
@@ -49,15 +48,14 @@ public class RouterBean {
         this.element = element;
     }
 
-    public RouterBean(RouteType routeType, Class<?> target, String path, String group) {
+    public RouterBean(RouteType routeType, Class<?> target, String path) {
         this.routeType = routeType;
         this.target = target;
         this.path = path;
-        this.group = group;
     }
 
-    public static RouterBean build(RouteType routeType, Class<?> target, String path, String group) {
-        return new RouterBean(routeType,target,path,group);
+    public static RouterBean build(RouteType routeType, Class<?> target, String path) {
+        return new RouterBean(routeType,target,path);
     }
 
     public Element getElement() {
@@ -66,14 +64,6 @@ public class RouterBean {
 
     public void setElement(Element element) {
         this.element = element;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
     }
 
     public String getPackagePath() {
