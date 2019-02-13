@@ -13,8 +13,9 @@ public class SecondActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
-        String extra = getIntent().getStringExtra("w");
-        Log.e("WANG","SecondActivity.onCreate."+extra );
+        String extra = getIntent().getStringExtra("name");
+        String extra2 = getIntent().getStringExtra("tag");
+        Log.e("WANG","SecondActivity.onCreate."+extra+" ================ "+extra2 );
 
     }
 }

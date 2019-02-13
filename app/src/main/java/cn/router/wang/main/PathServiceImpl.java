@@ -11,7 +11,7 @@ import cn.router.werouter.annotation.Router;
  * @author WANG
  * @date 2018/11/28
  */
-@Router(path = "/provider/PathServiceImpl")
+@Router(path = "native://provider/PathServiceImpl")
 public class PathServiceImpl implements PathReplaceProvider {
 
     @Override

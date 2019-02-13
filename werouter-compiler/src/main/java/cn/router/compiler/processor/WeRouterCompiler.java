@@ -9,6 +9,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.WildcardTypeName;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -42,7 +43,6 @@ import javax.tools.StandardLocation;
 import cn.router.werouter.annotation.Router;
 import cn.router.werouter.annotation.bean.RouterBean;
 import cn.router.werouter.annotation.enums.RouteType;
-import jdk.nashorn.api.scripting.JSObject;
 
 import static cn.router.compiler.processor.BaseParams.KEY_MODULE_NAME;
 
@@ -151,14 +151,10 @@ public class WeRouterCompiler extends AbstractProcessor {
                     if (handleGroup(routerBean)) {
                         String path = routerBean.getPath();
                         mGroupDatas.put(path, routerBean);
-                    } else {
-                        //连接带参数的
-
-
                     }
                 }
             }
-            Map<String,String> docData = new HashMap<>();
+            Map<String, String> docData = new HashMap<>();
             ParameterizedTypeName groupTypeName = ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(String.class), ClassName.get(RouterBean.class));
             ParameterSpec groupParam = ParameterSpec.builder(groupTypeName, BaseParams.GROUP_PARAM_NAME).build();
             ParameterizedTypeName providerParams = ParameterizedTypeName.get(
@@ -182,7 +178,7 @@ public class WeRouterCompiler extends AbstractProcessor {
                 //如果你不用也行  那就的自己用字符串去拼接了(MainActivity.class) 并且 你还得自己引入该Class包路径
                 // $T 可以帮你import.
                 RouteType routeType = routerBean.getRouteType();
-                docData.put(routerBean.getPath(),routerBean.getClassName());
+                docData.put(routerBean.getPath(), routerBean.getClassName());
                 if (RouteType.PROVIDE == routeType) {
                     TypeElement element = (TypeElement) routerBean.getElement();
                     ClassName className = ClassName.get(element);

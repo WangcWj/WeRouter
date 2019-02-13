@@ -3,8 +3,12 @@ package cn.router.api.router;
 import android.util.Log;
 
 import cn.router.api.base.DataStorage;
+import cn.router.api.debug.DebugConstant;
+import cn.router.api.debug.WeError;
 import cn.router.api.exception.HandlerException;
 import cn.router.api.exception.InitException;
+import cn.router.api.exception.NoProviderFoundException;
+import cn.router.api.exception.NoRouterFoundException;
 import cn.router.api.method.WeRouterPath;
 import cn.router.api.method.WeRouterProvider;
 import cn.router.api.utils.ClassUtils;
@@ -45,10 +49,9 @@ public class LoadingCenter {
             if (instance instanceof WeRouterPath) {
                 WeRouterPath weRouterRoot = (WeRouterPath) instance;
                 weRouterRoot.init(DataStorage.mGroups);
-                Log.e("WANG", "LoadingCenter.initByPlugin.className" + className);
             } else if (instance instanceof WeRouterProvider) {
                 WeRouterProvider provider = (WeRouterProvider) instance;
-
+                provider.init(DataStorage.mProviders);
             }
         } catch (Exception e) {
             throw new InitException(mTag + ": 插件初始化时出现了问题 :LoadingCenter.init()" + e.getMessage());
@@ -60,7 +63,7 @@ public class LoadingCenter {
         //加载要使用到的分组的数据
         RouterBean routerBean = DataStorage.mGroups.get(transform.getPath());
         if (null == routerBean) {
-            throw new HandlerException(mTag + "路径("+transform.getPath()+")丢失了~~~~~ ");
+            throw new NoRouterFoundException(mTag + "路径("+transform.getPath()+")丢失了~~~~~ ");
         } else {
             transform.setRouterBean(routerBean);
             if (transform.getRouteType() == RouteType.PROVIDE) {
@@ -78,16 +81,14 @@ public class LoadingCenter {
     }
 
     public static Transform buildProvider(String className) {
-        /*RouterBean routerBean = DataStorage.mProviders.get(className);
+        RouterBean routerBean = DataStorage.mProviders.get(className);
         if (null != routerBean) {
-            Transform transform = new Transform(routerBean.getPath(), routerBean.getGroup());
+            Transform transform = new Transform(routerBean.getPath());
             transform.setRouterBean(routerBean);
             return transform;
         } else {
-            return null;
-        }*/
-        return null;
+            throw new NoProviderFoundException(DebugConstant.TAG+ ": Can not find the specified class according to the class name ->"+className);
+        }
     }
-
 
 }

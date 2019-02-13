@@ -13,9 +13,14 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.Map;
 
+import cn.router.api.debug.DebugConstant;
+import cn.router.api.debug.WeError;
 import cn.router.api.exception.HandlerException;
 import cn.router.api.exception.InitException;
+import cn.router.api.exception.NoRouterFoundException;
 import cn.router.api.provider.PathReplaceProvider;
 import cn.router.werouter.annotation.enums.RouteType;
 
@@ -27,21 +32,22 @@ import cn.router.werouter.annotation.enums.RouteType;
  */
 
 public class WeRouterManager {
+
     private static WeRouterManager instance;
     private static boolean hasInit = false;
     private static Context mContext;
     private static Handler mHandle;
-    private String mTag = "WeRouter :";
     private final String NATIVE = "native://";
     private final String URL = "http://";
     private final String URLS = "https://";
-
+    private final String DIVISION = "&";
 
     public static boolean init(Application application) {
         mContext = application;
         mHandle = new Handler(Looper.getMainLooper());
         LoadingCenter.init();
         hasInit = true;
+        WeError.error("  LoadingCenter : Successful initialization!");
         return true;
     }
 
@@ -61,19 +67,65 @@ public class WeRouterManager {
         }
     }
 
-
     public Transform build(String path) {
+        WeError.error(": 当前跳转的路径是->"+path);
         PathReplaceProvider replaceProvider = navigation(PathReplaceProvider.class);
         if (null != replaceProvider) {
             path = replaceProvider.format(path);
+            WeError.error(": 通过PathReplaceProvider替换掉之后的路径是->"+path);
         }
         if (TextUtils.isEmpty(path)) {
-            throw new HandlerException(mTag + "请检查跳转路径是否正确!");
+            throw new HandlerException(DebugConstant.TAG + ": 请检查跳转路径是否正确!");
         }
-        path = handlePath(path);
-        return Transform.build(path);
+        Map<String,String> params = new HashMap<>();
+        path = handlePath(path,params);
+        return Transform.build(path,params);
     }
 
+    /**
+     * 从 Path中获取Group  把直接设置Group的功能去掉
+     * native://MainActivity&name=wang&tag=Chao 带参数的
+     * native://MainActivity   不带参数的
+     * @return
+     */
+    private String handlePath(String path,Map params) {
+        if (TextUtils.isEmpty(path) ) {
+            throw new HandlerException(DebugConstant.TAG + ": the path must be not null !");
+        }
+        if(path.startsWith(NATIVE) || path.startsWith(URL) || path.startsWith(URLS)){
+            String replacePath = path.replace(NATIVE,"").replace(URL,"").replace(URLS,"");
+            WeError.error(": 准备处理的跳转路径->"+replacePath);
+            if(replacePath.contains(DIVISION)){
+                handleParams(replacePath,params);
+                int index = path.indexOf(DIVISION);
+                path = path.substring(0,index);
+                WeError.error(": 最后的路径为 ->"+path);
+            }
+            return path;
+        }else {
+            throw new HandlerException(DebugConstant.TAG + ": the path must be start with :  ( native:// or https:// or http://) !");
+        }
+    }
+
+    /**
+     * 截取路径里面携带的参数
+     * @param replacePath 去掉 "native:// https:// http://"之后的路径.
+     * @param params
+     */
+    private void handleParams(String replacePath, Map params) {
+        String[] split = replacePath.split(DIVISION);
+        for (int i = 0; i <split.length; i++) {
+            String item = split[i];
+            WeError.error(": 发现参数->"+item);
+            if(item.contains("=")){
+                String[] values = item.split("=");
+                String key = values[0];
+                String value = values[1];
+                params.put(key,value);
+                WeError.error(": 参数的 key->"+key+"   value -> "+value);
+            }
+        }
+    }
 
     /**
      *  ARouter的设计:
@@ -113,12 +165,11 @@ public class WeRouterManager {
         }
     }
 
-
     public Object navigation(Context context, final Transform transform, final int requestCode) {
         try {
             LoadingCenter.completion(transform);
         } catch (Exception e) {
-           throw new RuntimeException("分组数据异常!");
+           throw new NoRouterFoundException("分组数据异常!");
         }
         final Context currentContext = null == context ? mContext : context;
 
@@ -185,47 +236,5 @@ public class WeRouterManager {
         }
 
     }
-
-    /**
-     * 从 Path中获取Group  把直接设置Group的功能去掉
-     *
-     * @return
-     */
-    private String handlePath(String path) {
-        if (TextUtils.isEmpty(path) ) {
-            throw new HandlerException(mTag + "the path must be not null !");
-        }
-        String lowerCasePath = path.toLowerCase();
-        if(lowerCasePath.startsWith(NATIVE) || lowerCasePath.startsWith(URL) || lowerCasePath.startsWith(URLS)){
-            return path;
-        }else {
-            throw new HandlerException(mTag + "the path must be start with :  ( native:// or https:// or http://) !");
-        }
-    }
-
-    /**
-     * 从 Path中获取Group  把直接设置Group的功能去掉
-     *
-     * @return
-     */
-    private String handleGroup(String path) {
-        if (TextUtils.isEmpty(path) || !path.startsWith("/")) {
-            throw new HandlerException(mTag + "the path must be start with '/' and contain more than 2 '/'!");
-        }
-        String lowerCasePath = path.toLowerCase();
-        //本来想搞成native://
-        try {
-            String group = lowerCasePath.substring(1, lowerCasePath.indexOf("/", 1));
-            if (TextUtils.isEmpty(group)) {
-                throw new HandlerException(mTag + "the path must be start with '/' and contain more than 2 '/'!");
-            } else {
-                return group;
-            }
-        } catch (Exception e) {
-
-        }
-        return null;
-    }
-
 
 }

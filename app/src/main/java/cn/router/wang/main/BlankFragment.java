@@ -7,11 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import cn.router.werouter.annotation.Router;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
+@Router(path = "native://BlankFragment")
 public class BlankFragment extends Fragment {
 
 

@@ -4,6 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
+import java.util.Map;
+import java.util.Set;
+
 import cn.router.api.method.WeRouterProvider;
 import cn.router.werouter.annotation.bean.RouterBean;
 
@@ -44,6 +47,18 @@ public class Transform extends RouterBean {
         return new Transform(path);
     }
 
+    public static Transform build(String path, Map<String,String> params){
+        Transform transform = new Transform(path);
+        if(params.size() > 0){
+            Set<String> keySet = params.keySet();
+            for (String key:keySet) {
+                String value = params.get(key);
+                transform.withString(key,value);
+            }
+        }
+        return transform;
+    }
+
     public Transform withString(@NonNull String key, @NonNull String value){
         mBundle.putString(key,value);
         return this;
@@ -57,11 +72,10 @@ public class Transform extends RouterBean {
         return navigation(null,-1);
     }
 
-
-
     public Object navigation(Context context,int requestCode){
      return WeRouterManager.getInstance().navigation(context,this,requestCode);
     }
+
     public void setRouterBean(RouterBean routerBean){
         setClassName(routerBean.getClassName());
         setPackagePath(routerBean.getPackagePath());
