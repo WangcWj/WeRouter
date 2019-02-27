@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements MduleMethod{
                 //native://MainActivity&name=wang&tag=Chao 带参数的
                 //native://MainActivity   不带参数的
                 WeRouter.getInstance()
-                        .build("native://SecondActivity&name=wang&tag=Chao")
+                        .build("native://LoginActivity")
                         .navigation(MainActivity.this);
 
                 Object navigation = WeRouter.getInstance().build("native://BlankFragment").navigation();

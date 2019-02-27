@@ -172,6 +172,7 @@ public class WeRouterCompiler extends AbstractProcessor {
                     .addAnnotation(Override.class)
                     .addModifiers(Modifier.PUBLIC);
             Set<Map.Entry<String, RouterBean>> entries = mGroupDatas.entrySet();
+            boolean haveProvider = false;
             for (Map.Entry<String, RouterBean> entry : entries) {
                 RouterBean routerBean = entry.getValue();
                 //之前不知道ARouter为什么要保存当前的Element,原来再这里用的,
@@ -180,6 +181,7 @@ public class WeRouterCompiler extends AbstractProcessor {
                 RouteType routeType = routerBean.getRouteType();
                 docData.put(routerBean.getPath(), routerBean.getClassName());
                 if (RouteType.PROVIDE == routeType) {
+                    haveProvider = true;
                     TypeElement element = (TypeElement) routerBean.getElement();
                     ClassName className = ClassName.get(element);
                     List<? extends TypeMirror> interfaces = element.getInterfaces();
@@ -225,15 +227,16 @@ public class WeRouterCompiler extends AbstractProcessor {
             JavaFile javaFile = JavaFile.builder(BaseParams.PACKAGE_NAME, typeSpec).build();
             javaFile.writeTo(mFiler);
 
-            TypeSpec providerType = TypeSpec.classBuilder(BaseParams.PROVIDER_CLASS_NAME + moduleName)
-                    .addModifiers(Modifier.PUBLIC)
-                    .addJavadoc(BaseParams.WARNING_TIPS)
-                    .addSuperinterface(ClassName.get(mElementUtils.getTypeElement(BaseParams.ROUTER_PROVIDER)))
-                    .addMethod(providerMethod.build())
-                    .build();
-            JavaFile file = JavaFile.builder(BaseParams.PACKAGE_NAME, providerType).build();
-            file.writeTo(mFiler);
-
+            if(haveProvider) {
+                TypeSpec providerType = TypeSpec.classBuilder(BaseParams.PROVIDER_CLASS_NAME + moduleName)
+                        .addModifiers(Modifier.PUBLIC)
+                        .addJavadoc(BaseParams.WARNING_TIPS)
+                        .addSuperinterface(ClassName.get(mElementUtils.getTypeElement(BaseParams.ROUTER_PROVIDER)))
+                        .addMethod(providerMethod.build())
+                        .build();
+                JavaFile file = JavaFile.builder(BaseParams.PACKAGE_NAME, providerType).build();
+                file.writeTo(mFiler);
+            }
         }
 
     }

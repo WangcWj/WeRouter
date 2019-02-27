@@ -59,7 +59,7 @@ public class Transform extends RouterBean {
         return transform;
     }
 
-    public Transform withString(@NonNull String key, @NonNull String value){
+    public Transform withString( String key, String value){
         mBundle.putString(key,value);
         return this;
     }
