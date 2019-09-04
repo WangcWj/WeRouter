@@ -1,6 +1,5 @@
 package cn.router.api.router;
 
-import android.util.Log;
 
 import cn.router.api.base.DataStorage;
 import cn.router.api.debug.DebugConstant;
