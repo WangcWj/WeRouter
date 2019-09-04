@@ -106,5 +106,11 @@ public class RouterBean {
         this.className = className;
     }
 
-
+    @Override
+    public String toString() {
+        return "RouterBean{" +
+                "path='" + path + '\'' +
+                ", className='" + className + '\'' +
+                '}';
+    }
 }

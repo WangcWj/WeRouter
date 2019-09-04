@@ -5,8 +5,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import java.util.Map;
+
 import cn.router.api.router.WeRouter;
 import cn.router.werouter.annotation.Router;
+import cn.router.werouter.annotation.bean.RouterBean;
 
 
 @Router(path = "native://MainActivity")

@@ -29,8 +29,11 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(':werouter-api')
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    annotationProcessor project(':werouter-compiler')
+
+    implementation 'cn.wang.werouter:api:1.0.0'
+    annotationProcessor 'cn.wang.werouter:compiler:1.0.0'
+//    implementation project(':werouter-api')
+//    annotationProcessor project(':werouter-compiler')
     implementation 'com.android.support:appcompat-v7:26.1.0'
 }

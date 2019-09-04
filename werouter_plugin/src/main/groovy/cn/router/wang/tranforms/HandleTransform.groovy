@@ -49,6 +49,8 @@ class HandleTransform extends Transform {
     @Override
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         super.transform(transformInvocation)
+        TransformHelper.initClasses.clear()
+        TransformHelper.targetFile = null
         System.out.println("==============start==============")
         transformInvocation.inputs.each { TransformInput transformInput ->
             transformInput.jarInputs.each { JarInput jarInput ->

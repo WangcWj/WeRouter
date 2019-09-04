@@ -3,9 +3,6 @@ buildscript {
     
     repositories {
         google()
-        maven {
-           url uri('./werouter_plugin/src/main/repertory')
-        }
         jcenter()
     }
     dependencies {
@@ -20,6 +17,9 @@ buildscript {
 allprojects {
     repositories {
         google()
+        maven {
+            url 'https://dl.bintray.com/wangchaochao/WeRouter'
+        }
         jcenter()
     }
 }

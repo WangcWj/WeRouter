@@ -3,8 +3,6 @@ package cn.router.api.router;
 
 import cn.router.api.base.DataStorage;
 import cn.router.api.debug.DebugConstant;
-import cn.router.api.debug.WeError;
-import cn.router.api.exception.HandlerException;
 import cn.router.api.exception.InitException;
 import cn.router.api.exception.NoProviderFoundException;
 import cn.router.api.exception.NoRouterFoundException;
@@ -25,10 +23,12 @@ public class LoadingCenter {
 
     private static String mTag = "WeRouter :";
 
+
     /**
      * 通过插件开始初始化工作
      */
     public static void init() {
+        DataStorage.clear();
         //like this...
         // initByPlugin("cn.router.process.Router$Provider$root$app");
         // initByPlugin("cn.router.process.Router$Root$root$app");

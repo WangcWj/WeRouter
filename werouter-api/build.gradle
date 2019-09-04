@@ -24,7 +24,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
-    api project (":werouter-annotation")
+    api 'cn.wang.werouter:annotation:1.0.0'
 }
 
 /*//添加
@@ -33,8 +33,8 @@ publish {
     userOrg = 'wangchaochao'//bintray.com你的用户名
     groupId = 'cn.wang.werouter'//jcenter上的路径
     artifactId = 'api'//项目名称
-    publishVersion = '1.0.0'//版本号
-    desc = '路由api'//描述，不重要
+    publishVersion = '1.0.2'//版本号
+    desc = 'annotation的依赖没加'//描述，不重要
     website = 'https://github.com/WangcWj/WeRouter'//网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
 }
 

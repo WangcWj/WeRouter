@@ -16,6 +16,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.router.api.base.DataStorage;
 import cn.router.api.debug.DebugConstant;
 import cn.router.api.debug.WeError;
 import cn.router.api.exception.HandlerException;
@@ -49,6 +50,14 @@ public class WeRouterManager {
         hasInit = true;
         WeError.error("  LoadingCenter : Successful initialization!");
         return true;
+    }
+
+    public void destroy(){
+        DataStorage.clear();
+        hasInit = false;
+        instance = null;
+        mHandle = null;
+        mContext = null;
     }
 
     public static WeRouterManager getInstance() {

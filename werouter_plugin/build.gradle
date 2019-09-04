@@ -1,7 +1,7 @@
 
 apply plugin: 'groovy'
 apply plugin: 'maven'
-//apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'com.novoda.bintray-release'
 dependencies {
     compile gradleApi()
     compile localGroovy()
@@ -26,14 +26,14 @@ uploadArchives {
 
 }
 
-/*//添加
+//添加
 publish {
     repoName = 'WeRouter'//不指明，默认是上传到maven,指明的话这里的名字需要和你创建的仓库的名字一样
     userOrg = 'wangchaochao'//bintray.com你的用户名
     groupId = 'cn.wang.werouter'//jcenter上的路径
     artifactId = 'plugin'//项目名称
-    publishVersion = '1.0.1'//版本号
-    desc = '看下更新快不快'//描述，不重要
+    publishVersion = '1.0.2'//版本号
+    desc = '改了缓存的bug'//描述，不重要
     website = 'https://github.com/WangcWj/WeRouter'//网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
 }
 
@@ -41,7 +41,7 @@ tasks.withType(Javadoc) {
     options.addStringOption('Xdoclint:none', '-quiet')
     options.addStringOption('encoding', 'UTF-8')
     options.addStringOption('charSet', 'UTF-8')
-}*/
+}
 
 
 
