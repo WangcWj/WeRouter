@@ -52,6 +52,7 @@ class HandleTransform extends Transform {
         TransformHelper.initClasses.clear()
         TransformHelper.targetFile = null
         System.out.println("==============start==============")
+        boolean leftSlash = File.separator == '/'
         transformInvocation.inputs.each { TransformInput transformInput ->
             transformInput.jarInputs.each { JarInput jarInput ->
                 //这个是遍历的当前项目下所有的Module的Jar包,除了Application所属的Module下的文件遍历不到.
@@ -80,6 +81,9 @@ class HandleTransform extends Transform {
                     //需要截取除了根路径之外的子目录路径
                     def filePath = file.absolutePath
                     def childPath = filePath.replace(rootDirPath, "")
+                    if (!leftSlash) {
+                        childPath = childPath.replaceAll("\\\\", "/")
+                    }
                     def findClassPackage = TransformHelper.findClassPackage.replace(".","/")
                     if (childPath.startsWith(findClassPackage) && childPath.endsWith(".class")) {
                         if (file.isFile()) {
